@@ -9,7 +9,7 @@ In case you are using the [ACL feature](https://dgraph.io/docs/enterprise-featur
 A basic usage example
 
 ```ts
-import { DgraphClient } from './dependencies.ts'
+import { DgraphClient } from 'https://raw.githubusercontent.com/Nick-Pashkov/deno-dgraph-client/master/mod.ts'
 
 const Dgraph = new DgraphClient({
     host: 'localhost',
