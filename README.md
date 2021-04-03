@@ -25,23 +25,21 @@ After logging in, you can proceed to make queries to the database.
 `DgraphClient` class exposes some methods for reading the database records
 
 - `getObject(type: string, id: string, fields: Array<any>, idField = 'id')`
-- `async queryObjects(type: string, fields: Array<any>)`
+- `queryObjects(type: string, fields: Array<any>)`
 
 Example usage:
 ```ts
 await Dgraph.getObject('Product', '0x4', ['id', 'name'])
-/** 
- * Returns a single object:
- * { id: 0x4, name: 'Product name' }
- * /
+
+// Returns a single object:
+// { id: 0x4, name: 'Product name' }
 ```
 
 ```ts
 await Dgraph.queryObjects('Product', ['id', 'name'])
-/**
- * Returns an array of objects:
- * [
- *   { id: 0x4, name: 'Product name' }
- * ]
- * /
+
+// Returns an array of objects:
+// [
+//    { id: 0x4, name: 'Product name' }
+// ]
 ```
