@@ -1,5 +1,5 @@
 import axios from "https://deno.land/x/axiod/mod.ts"
-import { DgraphException } from './types.ts'
+import { DgraphException, DgraphRequest } from './types.ts'
 
 class DgraphHTTP {
     private url: string
@@ -17,11 +17,12 @@ class DgraphHTTP {
         return data
     }
 
-    async graphql(gql: string) {
-        const { data } = await axios.post(`${this.url}/graphql`, gql, {
+    async graphql(request: DgraphRequest) {
+
+        const { data } = await axios.post(`${this.url}/graphql`, request, {
             headers: {
                 'X-Dgraph-AccessToken' : this._token || null,
-                'Content-Type': 'application/graphql'
+                'Content-Type': 'application/json'
             }
         })
         if(data.errors) throw new DgraphException(data.errors[0].message)

@@ -36,10 +36,23 @@ await Dgraph.getObject('Product', '0x4', ['id', 'name'])
 ```
 
 ```ts
-await Dgraph.queryObjects('Product', ['id', 'name'])
+await Dgraph.queryObjects({
+    type: 'Product',
+    count: 2,
+    returns: ["id", "name"]
+})
 
-// Returns an array of objects:
-// [
-//    { id: 0x4, name: 'Product name' }
-// ]
+// Returns an array of objects
+// you can use 'count', 'offset', 'filter' and 'order' modifiers
+```
+
+## Inserting objects
+```ts
+const result = await Dgraph.createObject({
+    type: 'Product',
+    input: [{name: "Cereal"}],
+    returns: ['id', 'name']
+})
+
+// 'result' will contain the new inserted object/objects
 ```
