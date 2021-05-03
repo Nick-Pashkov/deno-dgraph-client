@@ -70,7 +70,7 @@ export default class DgraphClient {
         }
     }
 
-    async createObject(params: DgraphInput) {
+    async createObjects(params: DgraphInput) {
         const { type, input } = params
         const tStart = Date.now()
         const gql = mutationAdd(params)
