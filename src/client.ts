@@ -1,7 +1,7 @@
-import { DgraphClientSettings, DgraphQuery, DgraphInput } from './types.ts'
+import { DgraphClientSettings, DgraphQuery, DgraphInput, DgraphInputUpdate, DgraphInputDelete, DgraphException } from './types.ts'
 import Request from './http.ts'
 import { queryOne, queryMultiple } from './query.ts'
-import { mutationAdd } from './mutation.ts'
+import { mutationAdd, mutationUpdate, mutationDelete } from './mutation.ts'
 
 export default class DgraphClient {
     private request: Request
@@ -27,8 +27,8 @@ export default class DgraphClient {
 
             this.request.token = response.accessJWT
             return request
-        } catch (error) {
-            return error.message
+        } catch (e) {
+            throw new DgraphException(e.message)
         }
     }
 
@@ -46,15 +46,15 @@ export default class DgraphClient {
             const execTime = Date.now() - tStart
             console.log(`query: get${type} - ${execTime}ms`)
             return data[`get${type}`]
-        } catch (error) {
-            return error.message
+        } catch (e) {
+            throw new DgraphException(e.message)
         }
     }
 
     async queryObjects(params: DgraphQuery) {
         const { type, filter, order } = params
         const tStart = Date.now()
-        let gql = queryMultiple(params)
+        const gql = queryMultiple(params)
 
         try {
             const { data } = await this.request.graphql({
@@ -65,8 +65,8 @@ export default class DgraphClient {
             const execTime = Date.now() - tStart
             console.log(`query: query${type} - ${execTime}ms`)
             return data[`query${type}`]
-        } catch (error) {
-            return error.message
+        } catch (e) {
+            throw new DgraphException(e.message)
         }
     }
 
@@ -74,7 +74,6 @@ export default class DgraphClient {
         const { type, input } = params
         const tStart = Date.now()
         const gql = mutationAdd(params)
-        console.log(gql)
 
         try {
             const { data } = await this.request.graphql({
@@ -85,8 +84,44 @@ export default class DgraphClient {
             const execTime = Date.now() - tStart
             console.log(`mutation: add${type} - ${execTime}ms`)
             return data[`add${type}`]
-        } catch (error) {
-            return error.message
+        } catch (e) {
+            throw new DgraphException(e.message)
+        }
+    }
+
+    async updateObjects(params: DgraphInputUpdate) {
+        const { filter, type, set, remove } = params
+        const tStart = Date.now()
+        const gql = mutationUpdate(params)
+
+        try {
+            const { data } = await this.request.graphql({
+                query: gql,
+                variables: { patch: { filter, set, remove } }
+            })
+            const execTime = Date.now() - tStart
+            console.log(`mutation: update${type} - ${execTime}ms`)
+            return data[`update${type}`]
+        } catch (e) {
+            throw new DgraphException(e.message)
+        }
+    }
+
+    async deleteObjects(params: DgraphInputDelete) {
+        const { type, filter } = params
+        const tStart = Date.now()
+        const gql = mutationDelete(params)
+
+        try {
+            const { data } = await this.request.graphql({
+                query: gql,
+                variables: { filter }
+            })
+            const execTime = Date.now() - tStart
+            console.log(`mutation: delete${type} - ${execTime}ms`)
+            return data[`delete${type}`]
+        } catch (e) {
+            throw new DgraphException(e.message)
         }
     }
 }

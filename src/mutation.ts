@@ -14,3 +14,29 @@ export const mutationAdd = (params: any) => {
 
     return gql
 }
+
+export const mutationUpdate = (params: any) => {
+    const { type, returns } = params
+    const gql = `
+    mutation update${type}($patch: Update${type}Input!) {
+        update${type}(input: $patch) {
+            ${type.toLowerCase()} {
+                ${returns.join(`\n${indent(4)}`)}
+            }
+        }
+    }`
+
+    return gql
+}
+
+export const mutationDelete = (params: any) => {
+    const { type } = params
+    const gql = `
+    mutation delete${type}($filter: ${type}Filter!) {
+        delete${type}(filter: $filter) {
+            msg
+        }
+    }`
+
+    return gql
+}

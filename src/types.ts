@@ -24,6 +24,19 @@ export type DgraphInput = {
     returns: Array<any>
 }
 
+export type DgraphInputUpdate = {
+    type: string
+    filter: any
+    returns: Array<any>
+    set?: Record<string, any>
+    remove?: Record<string, any>
+}
+
+export type DgraphInputDelete = {
+    type: string
+    filter: any
+}
+
 export class DgraphException extends Error {
     constructor(message: string) {
         super(message)
