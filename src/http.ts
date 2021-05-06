@@ -9,9 +9,12 @@ class DgraphHTTP {
         this.url = url
     }
 
-    async admin(gql: string) {
-        const { data } = await axios.post(`${this.url}/admin`, gql, {
-            headers: { 'Content-Type': 'application/graphql' }
+    async admin(request: DgraphRequest) {
+        const { data } = await axios.post(`${this.url}/admin`, request, {
+            headers: {
+                'X-Dgraph-AccessToken' : this._token || null,
+                'Content-Type': 'application/json'
+            }
         })
         if(data.errors) throw new DgraphException(data.errors[0].message)
         return data

@@ -12,7 +12,7 @@ export default class DgraphClient {
     }
 
     async login(username: string, password: string) {
-        const gql = `mutation {
+        const query = `mutation {
             login(userId: "${username}", password: "${password}") {
                 response {
                     accessJWT
@@ -22,11 +22,45 @@ export default class DgraphClient {
         }`
 
         try {
-            const request = await this.request.admin(gql)
+            const request = await this.request.admin({ query })
             const { response } = request.data.login
 
             this.request.token = response.accessJWT
             return request
+        } catch (e) {
+            throw new DgraphException(e.message)
+        }
+    }
+
+    async getSchema() : Promise<string> {
+        const query = `{
+            getGQLSchema {
+                schema
+            }
+        }`
+
+        try {
+            const request = await this.request.admin({ query })
+            return request.data.getGQLSchema.schema
+        } catch (e) {
+            throw new DgraphException(e.message)
+        }
+    }
+
+    async uploadSchema(schema: string) {
+        const query = `mutation($sch: String!) {
+            updateGQLSchema(input: { set: { schema: $sch}})
+            {
+                gqlSchema {
+                    schema
+                    generatedSchema
+                }
+            }
+        }`
+
+        try {
+            const request = await this.request.admin({ query, variables: { sch: schema } })
+            return request.data.updateGQLSchema.gqlSchema
         } catch (e) {
             throw new DgraphException(e.message)
         }
